@@ -26,9 +26,11 @@ Validate that the bootstrap was successful.
 flux check
 ```
 
-## Networking
+## K3s Networking
 
-The `host-gw` backend will be used. Run the respective scripts on the master and agent nodes to configure this.
+The `host-gw` (Host Gateway) backend will be used. Run the respective scripts on the master and agent nodes to configure this.
 
+The default VXLAN backend used by K3s is automatically blocked on strict networks (like an institution's one). This is due to the fact that it uses unencrypted UDP packets to interface between the master and the agent nodes. Such networking is blocked by default (given the strict security posture adopted by the institution's firewall) since it looks like a brute force attempt to penentrate into the network.
 
+Host Gateway works by writing direct route rule into Linux. For example, _"To talk to Pod Subnet 10.42.2.0, send standard packets directly to the Ethernet IP of Leaf Node B"_. Hence, the traffic appears as standard, normal computer-to-computer communication allowing the packets to pass through smoothly enabling intranet and internet access.
 
