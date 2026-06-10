@@ -1,0 +1,11 @@
+scan:
+  type: 'fs'
+  scanners:
+    - vuln
+    - secret
+    - misconfig
+
+severity: 'HIGH,CRITICAL'
+
+format: 'sarif'
+output: 'trivy-results.sarif'
