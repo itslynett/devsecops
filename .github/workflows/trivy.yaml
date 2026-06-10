@@ -8,7 +8,7 @@ on:
 jobs:
   trivy:
     name: USIU K8s Data Science Trivy Scan
-    runs-on: blacksmith-4vcpu-ubuntu-2404
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
