@@ -1,0 +1,43 @@
+name: Trivy File Security Scan
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  trivy:
+    name: USIU K8s Data Science Trivy Scan
+    runs-on: blacksmith-4vcpu-ubuntu-2404
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Get changed files
+        id: changed-files
+        uses: tj-actions/changed-files@v44
+        with:
+          separator: " "
+
+      - name: Install Trivy CLI via APT
+        if: steps.changed-files.outputs.any_changed == 'true'
+        run: |
+          sudo apt-get update && sudo apt-get install -y wget apt-transport-https gnupg lsb-release
+          wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | gpg --dearmor | sudo tee /usr/share/keyrings/trivy.gpg > /dev/null
+          echo "deb [signed-by=/usr/share/keyrings/trivy.gpg] https://aquasecurity.github.io/trivy-repo/deb $(lsb_release -sc) main" | sudo tee /etc/apt/sources.list.d/trivy.list
+          sudo apt-get update
+          sudo apt-get install -y trivy
+
+      - name: Run Trivy on diff
+        if: steps.changed-files.outputs.any_changed == 'true'
+        run: |
+          echo "Scanning changed files..."
+          for file in ${{ steps.changed-files.outputs.all_changed_files }}; do
+            if [ -f "$file" ]; then
+              echo "Scanning: $file"
+              # Runs the local binary using your trivy.yaml configurations
+              trivy fs --config trivy.yaml "$file" || true
+            fi
+          done
