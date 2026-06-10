@@ -12,12 +12,12 @@ spec:
     metadata:
       labels:
         app: linkding
-  spec:
-    containers:
-    - name: linkding
-      image: sissbruecker/linkding:latest
-      ports:
-      - containerPort: 9090
-      env:
-      - name: LD_DISABLE_BACKGROUND_TASKS
-        value: "False"
+    spec:
+      containers:
+      - name: linkding
+        image: sissbruecker/linkding:latest
+        ports:
+        - containerPort: 9090
+        env:
+        - name: LD_DISABLE_BACKGROUND_TASKS
+          value: "False"
