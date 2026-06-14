@@ -7,5 +7,6 @@
 ![Apache Hadoop](https://img.shields.io/badge/Apache_Hadoop-FFFF00?style=flat-square&logo=apachehadoop&logoColor=black)
 ![Trivy](https://img.shields.io/badge/Trivy-3F51B5?style=flat-square&logo=trivy&logoColor=white)
 ![Git](https://img.shields.io/badge/git-%23F05033.svg?style=flat-square&logo=git&logoColor=white)
+![Reloader](https://img.shields.io/badge/Reloader-FF4500?style=flat-square&logo=loop&logoColor=white)
 
 A GitOps FluxCD driven K8s Cluster for Data Science at USIU - Africa.
