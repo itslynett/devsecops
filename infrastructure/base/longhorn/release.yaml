@@ -8,7 +8,7 @@ spec:
   chart:
     spec:
       chart: longhorn
-      version: "1.7.2" # Pin to your preferred stable version (e.g., 1.7.x branch)
+      version: "1.12.0" # Pinned to the latest stable feature release
       sourceRef:
         kind: HelmRepository
         name: longhorn-charts
@@ -17,5 +17,5 @@ spec:
     remediation:
       retries: 3
   install:
-    createNamespace: false # Turned off because namespace.yaml handles this
+    createNamespace: false
   targetNamespace: longhorn-system
