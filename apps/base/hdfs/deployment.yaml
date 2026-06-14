@@ -60,9 +60,7 @@ spec:
       resources:
         requests:
           storage: 10Gi
-
 ---
-
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
@@ -87,15 +85,27 @@ spec:
             - sh
             - -c
             - |
-              # Ensure the directory exists on the Longhorn volume
-              mkdir -p /opt/hadoop/data/dataNode
+              # 1. Create a dedicated storage subdirectory *inside* the mount path
+              # This completely circumvents hitting the root-level lost+found folder
+              mkdir -p /opt/hadoop/data/dataNode/current_block_pool
               
-              # Change ownership to the unprivileged hadoop user/group
-              chown -R 1000:1000 /opt/hadoop/data
-              chmod 755 /opt/hadoop/data/dataNode
+              # 2. Change ownership specifically on the contents inside dataNode, avoiding lost+found
+              find /opt/hadoop/data/dataNode -maxdepth 1 ! -name 'lost+found' ! -name 'dataNode' -exec chown -R 1000:1000 {} +
+              
+              # 3. Explicitly adjust permissions for our specific worker paths
+              chown 1000:1000 /opt/hadoop/data/dataNode/current_block_pool
+              chmod 755 /opt/hadoop/data/dataNode/current_block_pool
           volumeMounts:
             - name: datanode-storage
               mountPath: /opt/hadoop/data/dataNode
+          # OVERRIDE the global non-root security rules for this initialization step only
+          securityContext:
+            runAsUser: 0
+            runAsGroup: 0
+            runAsNonRoot: false
+            allowPrivilegeEscalation: true
+            capabilities:
+              add: ["CHOWN", "FOWNER"]
       securityContext:
         fsGroup: 1000
         runAsNonRoot: true
@@ -112,8 +122,6 @@ spec:
         volumeMounts:
         - name: datanode-storage
           mountPath: /opt/hadoop/data/dataNode
-        
-        # Mount files individually so the directory context stays writeable
         - name: config
           mountPath: /opt/hadoop/etc/hadoop/core-site.xml
           subPath: core-site.xml
