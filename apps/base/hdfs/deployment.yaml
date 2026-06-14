@@ -14,6 +14,8 @@ spec:
       labels:
         app: hdfs
         component: namenode
+      annotations:
+        reloader.stakater.com/auto: "true"
     spec:
       securityContext:
         fsGroup: 1000
@@ -77,6 +79,8 @@ spec:
       labels:
         app: hdfs
         component: datanode
+      annotations:
+        reloader.stakater.com/auto: "true"
     spec:
       initContainers:
         - name: init-datanode-permissions

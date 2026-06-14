@@ -1,0 +1,19 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: reloader
+  namespace: flux-system # Or you can create/target a 'reloader' namespace
+spec:
+  releaseName: reloader
+  chart:
+    spec:
+      chart: reloader
+      version: "v1.0.118" # Good stable version for 2026 releases
+      sourceRef:
+        kind: HelmRepository
+        name: stakater
+        namespace: flux-system
+  interval: 1h
+  values:
+    reloader:
+      watchGlobally: true # Ensures it can watch your Hadoop configurations across namespaces
