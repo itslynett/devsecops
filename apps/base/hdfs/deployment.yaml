@@ -15,8 +15,23 @@ spec:
         app: hdfs
         component: datanode
     spec:
+      initContainers:
+        - name: init-datanode-permissions
+          image: busybox:1.36
+          command:
+            - sh
+            - -c
+            - |
+              # Ensure the directory exists on the Longhorn volume
+              mkdir -p /opt/hadoop/data/dataNode
+              
+              # Change ownership to the unprivileged hadoop user/group
+              chown -R 1000:1000 /opt/hadoop/data
+              chmod 755 /opt/hadoop/data/dataNode
+          volumeMounts:
+            - name: datanode-storage
+              mountPath: /opt/hadoop/data/dataNode
       securityContext:
-        # Longhorn automatically updates block volume permissions to match this group
         fsGroup: 1000
         runAsNonRoot: true
         runAsUser: 1000
@@ -33,7 +48,8 @@ spec:
         - name: datanode-storage
           mountPath: /opt/hadoop/data/dataNode
         - name: config
-          mountPath: /opt/hadoop/etc/hadoop
+          mountPath: /opt/hadoop/etc/hadoop/init-datanode.sh # Mounted safely via subPath
+          subPath: init-datanode.sh
       volumes:
       - name: config
         configMap:
@@ -43,7 +59,6 @@ spec:
   - metadata:
       name: datanode-storage
     spec:
-      # Swapped from local-path to consume your 2x replica Longhorn StorageClass
       storageClassName: longhorn-storage
       accessModes: [ "ReadWriteOnce" ]
       resources:
