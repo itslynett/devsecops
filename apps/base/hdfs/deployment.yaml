@@ -1,6 +1,71 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
+  name: namenode
+spec:
+  serviceName: "namenode"
+  replicas: 1
+  selector:
+    matchLabels:
+      app: hdfs
+      component: namenode
+  template:
+    metadata:
+      labels:
+        app: hdfs
+        component: namenode
+    spec:
+      securityContext:
+        fsGroup: 1000
+        runAsNonRoot: true
+        runAsUser: 1000
+      containers:
+      - name: namenode
+        image: apache/hadoop:3.5.0
+        env:
+        - name: HADOOP_HOME
+          value: /opt/hadoop
+        ports:
+        - containerPort: 9870
+        - containerPort: 9000
+        command: ["/bin/bash", "/opt/hadoop/etc/hadoop/start-hdfs.sh"]
+        volumeMounts:
+        - name: namenode-storage
+          mountPath: /opt/hadoop/data/nameNode
+        
+        # Mount files individually so the directory context stays writeable
+        - name: config
+          mountPath: /opt/hadoop/etc/hadoop/core-site.xml
+          subPath: core-site.xml
+        - name: config
+          mountPath: /opt/hadoop/etc/hadoop/hdfs-site.xml
+          subPath: hdfs-site.xml
+        - name: config
+          mountPath: /opt/hadoop/etc/hadoop/log4j.properties
+          subPath: log4j.properties
+        - name: config
+          mountPath: /opt/hadoop/etc/hadoop/start-hdfs.sh
+          subPath: start-hdfs.sh
+      volumes:
+      - name: config
+        configMap:
+          name: hadoop-config
+          defaultMode: 0755
+  volumeClaimTemplates:
+  - metadata:
+      name: namenode-storage
+    spec:
+      storageClassName: longhorn-storage
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: 10Gi
+
+---
+
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
   name: datanode
 spec:
   serviceName: "datanode"
@@ -47,8 +112,19 @@ spec:
         volumeMounts:
         - name: datanode-storage
           mountPath: /opt/hadoop/data/dataNode
+        
+        # Mount files individually so the directory context stays writeable
         - name: config
-          mountPath: /opt/hadoop/etc/hadoop/init-datanode.sh # Mounted safely via subPath
+          mountPath: /opt/hadoop/etc/hadoop/core-site.xml
+          subPath: core-site.xml
+        - name: config
+          mountPath: /opt/hadoop/etc/hadoop/hdfs-site.xml
+          subPath: hdfs-site.xml
+        - name: config
+          mountPath: /opt/hadoop/etc/hadoop/log4j.properties
+          subPath: log4j.properties
+        - name: config
+          mountPath: /opt/hadoop/etc/hadoop/init-datanode.sh
           subPath: init-datanode.sh
       volumes:
       - name: config
@@ -64,55 +140,3 @@ spec:
       resources:
         requests:
           storage: 50Gi
----
-apiVersion: apps/v1
-kind: StatefulSet
-metadata:
-  name: namenode
-spec:
-  serviceName: "namenode"
-  replicas: 1
-  selector:
-    matchLabels:
-      app: hdfs
-      component: namenode
-  template:
-    metadata:
-      labels:
-        app: hdfs
-        component: namenode
-    spec:
-      securityContext:
-        fsGroup: 1000
-        runAsNonRoot: true
-        runAsUser: 1000
-      containers:
-      - name: namenode
-        image: apache/hadoop:3.5.0
-        env:
-        - name: HADOOP_HOME
-          value: /opt/hadoop
-        ports:
-        - containerPort: 9870
-        - containerPort: 9000
-        command: ["/bin/bash", "/opt/hadoop/etc/hadoop/start-hdfs.sh"]
-        volumeMounts:
-        - name: namenode-storage
-          mountPath: /opt/hadoop/data/nameNode
-        - name: config
-          mountPath: /opt/hadoop/etc/hadoop
-      volumes:
-      - name: config
-        configMap:
-          name: hadoop-config
-          defaultMode: 0755
-  volumeClaimTemplates:
-  - metadata:
-      name: namenode-storage
-    spec:
-      # NameNode state (FsImage/EditLog) is critical; keeping it on Longhorn handles node-loss resilience safely
-      storageClassName: longhorn-storage
-      accessModes: [ "ReadWriteOnce" ]
-      resources:
-        requests:
-          storage: 10Gi
