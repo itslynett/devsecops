@@ -14,3 +14,4 @@ spec:
   dependsOn:
     - name: infrastructure-layer
   timeout: 5m
+  targetNamespace: hadoop

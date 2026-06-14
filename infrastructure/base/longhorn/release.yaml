@@ -2,13 +2,13 @@ apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
   name: longhorn
-  namespace: flux-system # Or your designated infra namespace
+  namespace: flux-system
 spec:
   interval: 15m
   chart:
     spec:
       chart: longhorn
-      version: "1.12.0" # Pin to your preferred stable version
+      version: "1.7.2" # Pin to your preferred stable version (e.g., 1.7.x branch)
       sourceRef:
         kind: HelmRepository
         name: longhorn-charts
@@ -17,5 +17,5 @@ spec:
     remediation:
       retries: 3
   install:
-    createNamespace: true
+    createNamespace: false # Turned off because namespace.yaml handles this
   targetNamespace: longhorn-system
