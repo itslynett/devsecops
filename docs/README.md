@@ -17,7 +17,7 @@ export GITHUB_TOKEN=token_path3r3
 Proceed to bootstrap the installation.
 
 ```bash
-flux bootstrap github --owner=mistiusiu --repository=usiu-k8s-data-science --private=false --personal=true --path=clusters/testing
+flux bootstrap github --owner=mistiusiu --repository=usiu-k8s-data-science --private=false --personal=true --path=clusters/hadoop --token-auth --timeout=15m0s
 ```
 
 Validate that the bootstrap was successful.

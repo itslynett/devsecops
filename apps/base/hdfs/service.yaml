@@ -1,0 +1,65 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: namenode
+spec:
+  clusterIP: None
+  selector:
+    app: hdfs
+    component: namenode
+  ports:
+    - name: fs-rpc
+      port: 8020
+      targetPort: 8020
+    - name: fs-legacy
+      port: 9000
+      targetPort: 9000
+    - name: ui
+      port: 9870
+      targetPort: 9870
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: datanode
+spec:
+  clusterIP: None # Headless service for StatefulSet
+  selector:
+    app: hdfs
+    component: datanode
+  ports:
+    - name: data
+      port: 9864
+---
+# Use this to access the NameNode UI and RPC from your laptop
+apiVersion: v1
+kind: Service
+metadata:
+  name: namenode-external
+spec:
+  type: LoadBalancer
+  selector:
+    app: hdfs
+    component: namenode
+  ports:
+    - name: ui
+      port: 9870
+      targetPort: 9870
+    - name: fs-rpc
+      port: 8020
+      targetPort: 8020
+---
+# Use this to allow the external network to talk to DataNodes
+apiVersion: v1
+kind: Service
+metadata:
+  name: datanode-external
+spec:
+  type: LoadBalancer
+  selector:
+    app: hdfs
+    component: datanode
+  ports:
+    - name: data
+      port: 9864
+      targetPort: 9864

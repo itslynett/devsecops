@@ -1,0 +1,103 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: datanode
+spec:
+  serviceName: "datanode"
+  replicas: 5
+  selector:
+    matchLabels:
+      app: hdfs
+      component: datanode
+  template:
+    metadata:
+      labels:
+        app: hdfs
+        component: datanode
+    spec:
+      securityContext:
+        # Longhorn automatically updates block volume permissions to match this group
+        fsGroup: 1000
+        runAsNonRoot: true
+        runAsUser: 1000
+      containers:
+      - name: datanode
+        image: apache/hadoop:3.5.0
+        env:
+        - name: HADOOP_HOME
+          value: /opt/hadoop
+        - name: HADOOP_DATANODE_OPTS
+          value: "-Xmx512m -Xms256m"
+        command: ["/bin/bash", "/opt/hadoop/etc/hadoop/init-datanode.sh"]
+        volumeMounts:
+        - name: datanode-storage
+          mountPath: /opt/hadoop/data/dataNode
+        - name: config
+          mountPath: /opt/hadoop/etc/hadoop
+      volumes:
+      - name: config
+        configMap:
+          name: hadoop-config
+          defaultMode: 0755
+  volumeClaimTemplates:
+  - metadata:
+      name: datanode-storage
+    spec:
+      # Swapped from local-path to consume your 2x replica Longhorn StorageClass
+      storageClassName: longhorn-storage
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: 50Gi
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: namenode
+spec:
+  serviceName: "namenode"
+  replicas: 1
+  selector:
+    matchLabels:
+      app: hdfs
+      component: namenode
+  template:
+    metadata:
+      labels:
+        app: hdfs
+        component: namenode
+    spec:
+      securityContext:
+        fsGroup: 1000
+        runAsNonRoot: true
+        runAsUser: 1000
+      containers:
+      - name: namenode
+        image: apache/hadoop:3.5.0
+        env:
+        - name: HADOOP_HOME
+          value: /opt/hadoop
+        ports:
+        - containerPort: 9870
+        - containerPort: 9000
+        command: ["/bin/bash", "/opt/hadoop/etc/hadoop/start-hdfs.sh"]
+        volumeMounts:
+        - name: namenode-storage
+          mountPath: /opt/hadoop/data/nameNode
+        - name: config
+          mountPath: /opt/hadoop/etc/hadoop
+      volumes:
+      - name: config
+        configMap:
+          name: hadoop-config
+          defaultMode: 0755
+  volumeClaimTemplates:
+  - metadata:
+      name: namenode-storage
+    spec:
+      # NameNode state (FsImage/EditLog) is critical; keeping it on Longhorn handles node-loss resilience safely
+      storageClassName: longhorn-storage
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: 10Gi

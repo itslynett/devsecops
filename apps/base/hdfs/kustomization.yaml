@@ -1,0 +1,13 @@
+resources:
+  - deployment.yaml
+  - service.yaml
+  - namespace.yaml
+
+configMapGenerator:
+  - name: hadoop-config
+    files:
+      - hadoop_config/core-site.xml
+      - hadoop_config/hdfs-site.xml
+      - hadoop_config/log4j.properties
+      - hadoop_config/init-datanode.sh
+      - hadoop_config/start-hdfs.sh
