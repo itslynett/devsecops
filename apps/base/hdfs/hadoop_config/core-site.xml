@@ -4,7 +4,7 @@
     <property>
         <name>fs.defaultFS</name>
         <!-- Points to the specific StatefulSet pod DNS -->
-        <value>hdfs://hdfs-namenode-0.hdfs-namenode:8020</value>
+        <value>hdfs://namenode-0.namenode:8020</value>
     </property>
     <property>
         <name>hadoop.proxyuser.root.hosts</name>
