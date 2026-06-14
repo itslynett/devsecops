@@ -11,7 +11,7 @@
     </property>
     <property>
         <name>dfs.datanode.data.dir</name>
-        <value>file:///opt/hadoop/data/dataNode</value>
+        <value>file:///opt/hadoop/data/dataNode/current_block_pool</value>
     </property>
     <property>
         <name>dfs.permissions.enabled</name>
