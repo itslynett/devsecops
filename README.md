@@ -1,7 +1,7 @@
 # USIU - Africa K8s Cluster
 
 ![Kubernetes](https://img.shields.io/badge/Kubernetes-%23326ce5.svg?style=flat-square&logo=kubernetes&logoColor=white)
-![K3s](https://img.shields.io/badge/K3s-FF6C37?style=flat-square&logo=k3s&logoColor=white)
+![Talos Linux](https://img.shields.io/badge/Talos_Linux-%231E293B.svg?style=flat-square&logo=talos&logoColor=white)
 ![FluxCD](https://img.shields.io/badge/FluxCD-008080?style=flat-square&logo=flux&logoColor=white)
 ![Longhorn](https://img.shields.io/badge/Longhorn-FFA500?style=flat-square&logo=longhorn&logoColor=white)
 ![Apache Hadoop](https://img.shields.io/badge/Apache_Hadoop-FFFF00?style=flat-square&logo=apachehadoop&logoColor=black)
