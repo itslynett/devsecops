@@ -1,0 +1,6 @@
+customization:
+  systemExtensions:
+    officialExtensions:
+      # Needed for Longhorn
+      - siderolabs/iscsi-tools
+      - siderolabs/util-linux-tools
