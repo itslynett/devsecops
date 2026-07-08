@@ -24,8 +24,6 @@ spec:
       retries: 3
   uninstall:
     keepHistory: false
-  driftCorrection:
-    mode: Patch
   values:
     settings:
       deletingConfirmationFlag: true
