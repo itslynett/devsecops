@@ -22,6 +22,8 @@ spec:
     crds: CreateReplace
     remediation:
       retries: 3
+      strategy: uninstall
+      remediateLastFailure: true
   uninstall:
     keepHistory: false
   values:
