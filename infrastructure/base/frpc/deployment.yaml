@@ -13,6 +13,14 @@ spec:
       labels:
         app: frpc
     spec:
+      tolerations:
+        - key: node-role.kubernetes.io/control-plane
+          operator: Exists
+          effect: NoSchedule
+
+      nodeSelector:
+        node-role.kubernetes.io/control-plane: ""
+
       containers:
         - name: frpc
           image: fatedier/frpc:v0.60.0
