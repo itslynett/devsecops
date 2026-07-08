@@ -22,46 +22,46 @@ spec:
         runAsNonRoot: true
         runAsUser: 1000
       containers:
-      - name: namenode
-        image: apache/hadoop:3.5.0
-        env:
-        - name: HADOOP_HOME
-          value: /opt/hadoop
-        ports:
-        - containerPort: 9870
-        - containerPort: 9000
-        command: ["/bin/bash", "/opt/hadoop/etc/hadoop/start-hdfs.sh"]
-        volumeMounts:
-        - name: namenode-storage
-          mountPath: /opt/hadoop/data/nameNode
-        
-        # Mount files individually so the directory context stays writeable
-        - name: config
-          mountPath: /opt/hadoop/etc/hadoop/core-site.xml
-          subPath: core-site.xml
-        - name: config
-          mountPath: /opt/hadoop/etc/hadoop/hdfs-site.xml
-          subPath: hdfs-site.xml
-        - name: config
-          mountPath: /opt/hadoop/etc/hadoop/log4j.properties
-          subPath: log4j.properties
-        - name: config
-          mountPath: /opt/hadoop/etc/hadoop/start-hdfs.sh
-          subPath: start-hdfs.sh
+        - name: namenode
+          image: apache/hadoop:3.5.0
+          env:
+            - name: HADOOP_HOME
+              value: /opt/hadoop
+          ports:
+            - containerPort: 9870
+            - containerPort: 9000
+          command: ["/bin/bash", "/opt/hadoop/etc/hadoop/start-hdfs.sh"]
+          volumeMounts:
+            - name: namenode-storage
+              mountPath: /opt/hadoop/data/nameNode
+
+            # Mount files individually so the directory context stays writeable
+            - name: config
+              mountPath: /opt/hadoop/etc/hadoop/core-site.xml
+              subPath: core-site.xml
+            - name: config
+              mountPath: /opt/hadoop/etc/hadoop/hdfs-site.xml
+              subPath: hdfs-site.xml
+            - name: config
+              mountPath: /opt/hadoop/etc/hadoop/log4j.properties
+              subPath: log4j.properties
+            - name: config
+              mountPath: /opt/hadoop/etc/hadoop/start-hdfs.sh
+              subPath: start-hdfs.sh
       volumes:
-      - name: config
-        configMap:
-          name: hadoop-config
-          defaultMode: 0755
+        - name: config
+          configMap:
+            name: hadoop-config
+            defaultMode: 0755
   volumeClaimTemplates:
-  - metadata:
-      name: namenode-storage
-    spec:
-      storageClassName: longhorn-storage
-      accessModes: [ "ReadWriteOnce" ]
-      resources:
-        requests:
-          storage: 10Gi
+    - metadata:
+        name: namenode-storage
+      spec:
+        storageClassName: longhorn-storage
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: 10Gi
 ---
 apiVersion: apps/v1
 kind: StatefulSet
@@ -69,7 +69,7 @@ metadata:
   name: datanode
 spec:
   serviceName: "datanode"
-  replicas: 5
+  replicas: 3
   selector:
     matchLabels:
       app: hdfs
@@ -92,10 +92,10 @@ spec:
               # 1. Create a dedicated storage subdirectory *inside* the mount path
               # This completely circumvents hitting the root-level lost+found folder
               mkdir -p /opt/hadoop/data/dataNode/current_block_pool
-              
+
               # 2. Change ownership specifically on the contents inside dataNode, avoiding lost+found
               find /opt/hadoop/data/dataNode -maxdepth 1 ! -name 'lost+found' ! -name 'dataNode' -exec chown -R 1000:1000 {} +
-              
+
               # 3. Explicitly adjust permissions for our specific worker paths
               chown 1000:1000 /opt/hadoop/data/dataNode/current_block_pool
               chmod 755 /opt/hadoop/data/dataNode/current_block_pool
@@ -115,40 +115,40 @@ spec:
         runAsNonRoot: true
         runAsUser: 1000
       containers:
-      - name: datanode
-        image: apache/hadoop:3.5.0
-        env:
-        - name: HADOOP_HOME
-          value: /opt/hadoop
-        - name: HADOOP_DATANODE_OPTS
-          value: "-Xmx512m -Xms256m"
-        command: ["/bin/bash", "/opt/hadoop/etc/hadoop/init-datanode.sh"]
-        volumeMounts:
-        - name: datanode-storage
-          mountPath: /opt/hadoop/data/dataNode
-        - name: config
-          mountPath: /opt/hadoop/etc/hadoop/core-site.xml
-          subPath: core-site.xml
-        - name: config
-          mountPath: /opt/hadoop/etc/hadoop/hdfs-site.xml
-          subPath: hdfs-site.xml
-        - name: config
-          mountPath: /opt/hadoop/etc/hadoop/log4j.properties
-          subPath: log4j.properties
-        - name: config
-          mountPath: /opt/hadoop/etc/hadoop/init-datanode.sh
-          subPath: init-datanode.sh
+        - name: datanode
+          image: apache/hadoop:3.5.0
+          env:
+            - name: HADOOP_HOME
+              value: /opt/hadoop
+            - name: HADOOP_DATANODE_OPTS
+              value: "-Xmx512m -Xms256m"
+          command: ["/bin/bash", "/opt/hadoop/etc/hadoop/init-datanode.sh"]
+          volumeMounts:
+            - name: datanode-storage
+              mountPath: /opt/hadoop/data/dataNode
+            - name: config
+              mountPath: /opt/hadoop/etc/hadoop/core-site.xml
+              subPath: core-site.xml
+            - name: config
+              mountPath: /opt/hadoop/etc/hadoop/hdfs-site.xml
+              subPath: hdfs-site.xml
+            - name: config
+              mountPath: /opt/hadoop/etc/hadoop/log4j.properties
+              subPath: log4j.properties
+            - name: config
+              mountPath: /opt/hadoop/etc/hadoop/init-datanode.sh
+              subPath: init-datanode.sh
       volumes:
-      - name: config
-        configMap:
-          name: hadoop-config
-          defaultMode: 0755
+        - name: config
+          configMap:
+            name: hadoop-config
+            defaultMode: 0755
   volumeClaimTemplates:
-  - metadata:
-      name: datanode-storage
-    spec:
-      storageClassName: longhorn-storage
-      accessModes: [ "ReadWriteOnce" ]
-      resources:
-        requests:
-          storage: 50Gi
+    - metadata:
+        name: datanode-storage
+      spec:
+        storageClassName: longhorn-storage
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: 50Gi
