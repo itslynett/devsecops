@@ -1,0 +1,15 @@
+serverAddr: "bridge.synthahub.co.ke"
+serverPort: 7000
+
+proxies:
+  - name: "talos-api"
+    type: "tcp"
+    localIP: "172.16.8.183"
+    localPort: 50000
+    remotePort: 50000
+
+  - name: "k8s-api"
+    type: "tcp"
+    localIP: "kubernetes.default.svc"
+    localPort: 443
+    remotePort: 6443

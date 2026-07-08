@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frpc
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: frpc
+  template:
+    metadata:
+      labels:
+        app: frpc
+    spec:
+      containers:
+        - name: frpc
+          image: fatedier/frpc:v0.60.0
+          # Explicitly tell frpc to look for the YAML file format
+          args: ["-c", "/etc/frp/frpc.yaml"]
+          volumeMounts:
+            - name: config-volume
+              mountPath: /etc/frp
+      volumes:
+        - name: config-volume
+          configMap:
+            name: frpc-config

@@ -1,0 +1,16 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+# Reference back to your base manifests
+resources:
+  - ../../base/frpc
+
+# Generate the ConfigMap directly from the local .toml file
+configMapGenerator:
+  - name: frpc-config
+    files:
+      - frpc.yaml
+
+# Ensures that if the config changes, Flux will trigger a rolling restart of the pod
+generatorOptions:
+  disableNameSuffixHash: false
