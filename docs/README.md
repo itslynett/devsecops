@@ -47,5 +47,5 @@ kubectl create namespace $NAMESPACE
 ```
 
 ```bash
-kubectl create secret generic infisical-machine-identity-credentials --namespace=$NAMESPACE --from-literal=client_id=$CLIENT_ID --from-literal=client_secret=$CLIENT_SECRET
+kubectl create secret generic infisical-machine-identity-credentials --namespace=$NAMESPACE --from-literal=clientId=$CLIENT_ID --from-literal=clientSecret=$CLIENT_SECRET
 ```
