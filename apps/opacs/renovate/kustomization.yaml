@@ -10,4 +10,4 @@ resources:
 images:
   - name: renovate
     newName: mend/renovate-ce
-    newTag: 14.6.0-full
+    newTag: 14.8.0-full
