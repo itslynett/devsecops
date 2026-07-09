@@ -23,7 +23,7 @@ spec:
         runAsUser: 1000
       containers:
         - name: namenode
-          image: apache/hadoop:3.5.0
+          image: hdfs
           env:
             - name: HADOOP_HOME
               value: /opt/hadoop
@@ -116,7 +116,7 @@ spec:
         runAsUser: 1000
       containers:
         - name: datanode
-          image: apache/hadoop:3.5.0
+          image: hdfs
           env:
             - name: HADOOP_HOME
               value: /opt/hadoop
