@@ -2,16 +2,16 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
 resources:
-  - ../../base
+  - ../../base/renovate
 
 configMapGenerator:
   - name: renovate-config
     envs:
-      - ../../base/renovate-common.env
+      - ../../base/renovate/renovate-common.env
       - renovate-prod.env
   - name: renovate-config-files
     files:
-      - config.js=../../base/renovate-config.js
+      - config.js=../../base/renovate/renovate-config.js
 
 secretGenerator:
   - name: renovate-secret
@@ -20,5 +20,5 @@ secretGenerator:
     type: Opaque
   - name: renovate-github-app-pem
     files:
-      - github-app.pem=../../base/mistiusiu-mend-renovate.2026-07-09.private-key.pem
+      - github-app.pem=../../base/renovate/mistiusiu-mend-renovate.2026-07-09.private-key.pem
     type: Opaque
