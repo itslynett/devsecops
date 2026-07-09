@@ -31,3 +31,21 @@ Upgrade the Talos Linux cluster to be compatible with Longhorn.
 ```bash
 talosctl -n <NODE_IP> upgrade --image factory.talos.dev/metal-installer/613e1592b2da41ae5e265e8789429f22e121aab91cb4deb6bc3c0b6262961245:v1.13.5 --talosconfig=./talosconfig
 ```
+
+## Infisical Authentication
+
+Set up the `infisical-machine-identity-credentials` secret on `big-data` cluster.
+
+```bash
+export CLIENT_ID=<client_id>
+export CLIENT_SECRET=<client_secret>
+export NAMESPACE=<namespace>
+```
+
+```bash
+kubectl create namespace $NAMESPACE
+```
+
+```bash
+kubectl create secret generic infisical-machine-identity-credentials --namespace=$NAMESPACE --from-literal=client_id=$CLIENT_ID --from-literal=client_secret=$CLIENT_SECRET
+```
