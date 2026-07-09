@@ -16,6 +16,6 @@ proxies:
 
   - name: "renovate-mistiusiu"
     type: "http"
-    localIP: "renovate-ce.default.svc.cluster.local"
+    localIP: "renovate-ce.renovate.svc.cluster.local"
     localPort: 8080
     subdomain: "renovate"
