@@ -1,0 +1,81 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: renovate-ce
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: renovate-ce
+  template:
+    metadata:
+      labels:
+        app: renovate-ce
+    spec:
+      securityContext:
+        fsGroup: 1000
+      containers:
+        - name: renovate
+          image: renovate
+          securityContext:
+            runAsUser: 1000
+            runAsGroup: 1000
+          ports:
+            - containerPort: 8080
+              name: http-webhook
+          envFrom:
+            - configMapRef:
+                name: renovate-config
+          env:
+            - name: MEND_RNV_WEBHOOK_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: renovate-secret
+                  key: MEND_RNV_WEBHOOK_SECRET
+            - name: GITHUB_COM_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: renovate-secret
+                  key: GITHUB_COM_TOKEN
+            - name: HOME
+              value: /tmp/renovate
+            - name: XDG_CONFIG_HOME
+              value: /tmp/renovate/.config
+            - name: XDG_CACHE_HOME
+              value: /tmp/renovate/.cache
+            - name: POETRY_CACHE_DIR
+              value: /tmp/renovate/.cache/pypoetry
+            - name: POETRY_CONFIG_DIR
+              value: /tmp/renovate/.config/pypoetry
+            - name: POETRY_VIRTUALENVS_PATH
+              value: /tmp/renovate/.virtualenvs
+            - name: POETRY_DATA_DIR
+              value: /tmp/renovate/.local/share/pypoetry
+            - name: XDG_DATA_HOME
+              value: /tmp/renovate/.local/share
+            - name: POETRY_KEYRING_ENABLED
+              value: "false"
+          volumeMounts:
+            - name: renovate-local-storage
+              mountPath: /usr/src/app/data
+            - name: renovate-config-volume
+              mountPath: /usr/src/app/config.js
+              subPath: config.js
+            - name: renovate-github-app-pem-volume
+              mountPath: /usr/src/app/renovate.private-key.pem
+              subPath: renovate.private-key.pem
+      volumes:
+        - name: renovate-local-storage
+          persistentVolumeClaim:
+            claimName: renovate-local-pvc
+        - name: renovate-config-volume
+          configMap:
+            name: renovate-config-files
+        - name: renovate-github-app-pem-volume
+          secret:
+            secretName: renovate-github-app-pem
+            items:
+              - key: github-app.pem
+                path: renovate.private-key.pem
