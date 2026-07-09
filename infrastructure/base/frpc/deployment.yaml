@@ -23,7 +23,7 @@ spec:
 
       containers:
         - name: frpc
-          image: fatedier/frpc:v0.60.0
+          image: frpc
           # Explicitly tell frpc to look for the YAML file format
           args: ["-c", "/etc/frp/frpc.yaml"]
           volumeMounts:

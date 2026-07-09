@@ -7,6 +7,12 @@ namespace: frpc
 resources:
   - ../../base/frpc
 
+
+images:
+  - name: frpc
+    newName: fatedier/frpc
+    newTag: v0.60.0
+
 # Generate the ConfigMap directly from the local .toml file
 configMapGenerator:
   - name: frpc-config
