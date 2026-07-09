@@ -1,0 +1,20 @@
+apiVersion: secrets.infisical.com/v1beta1
+kind: InfisicalConnection
+metadata:
+  name: infisical-connection
+  namespace: renovate # Fixed: Shifted to target application namespace
+spec:
+  address: https://infisical.sazara.co.ke
+---
+apiVersion: secrets.infisical.com/v1alpha1
+kind: InfisicalAuth
+metadata:
+  name: renovate-infisical-auth
+  namespace: renovate # Fixed: Matches application space
+spec:
+  connectionRef:
+    name: infisical-connection
+  universalAuth:
+    secretsRef:
+      secretName: infisical-machine-identity-credentials
+      secretNamespace: renovate

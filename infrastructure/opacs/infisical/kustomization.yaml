@@ -2,6 +2,4 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
 resources:
-  - ../../base/renovate
-  - infisical-auth.yaml
-  - infisical-secrets.yaml
+  - ../../base/infisical # References the base root definition

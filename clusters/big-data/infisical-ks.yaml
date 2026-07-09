@@ -1,15 +1,13 @@
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: renovate-opacs
+  name: infisical-operator
   namespace: flux-system
 spec:
   interval: 10m0s
-  path: ./apps/opacs/renovate
+  path: ./infrastructure/opacs/infisical
   prune: true
   sourceRef:
     kind: GitRepository
     name: flux-system
-  dependsOn:
-    - name: infisical-operator
-  targetNamespace: renovate
+  targetNamespace: infisical
