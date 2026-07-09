@@ -19,6 +19,8 @@ spec:
     clientIdRef:
       name: infisical-machine-identity-credentials
       key: clientId
+      namespace: renovate
     clientSecretRef:
       name: infisical-machine-identity-credentials
       key: clientSecret
+      namespace: renovate
