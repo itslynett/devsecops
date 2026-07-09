@@ -8,5 +8,7 @@
 ![Trivy](https://img.shields.io/badge/Trivy-3F51B5?style=flat-square&logo=trivy&logoColor=white)
 ![Git](https://img.shields.io/badge/git-%23F05033.svg?style=flat-square&logo=git&logoColor=white)
 ![Reloader](https://img.shields.io/badge/Reloader-FF4500?style=flat-square&logo=loop&logoColor=white)
+![Infisical](https://img.shields.io/badge/Infisical-%23000000.svg?style=flat-square&logo=infinity&logoColor=FFD700)
+![Mend Renovate](https://img.shields.io/badge/Mend_Renovate-%23002F6C.svg?style=flat-square&logo=renovate&logoColor=white)
 
 A GitOps FluxCD driven K8s Cluster for Data Science at USIU - Africa.
