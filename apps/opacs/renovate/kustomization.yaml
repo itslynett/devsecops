@@ -5,3 +5,9 @@ resources:
   - ../../base/renovate
   - infisical-auth.yaml
   - infisical-secrets.yaml
+
+
+images:
+  - name: renovate
+    newName: mend/renovate-ce
+    newTag: 14.6.0-full
