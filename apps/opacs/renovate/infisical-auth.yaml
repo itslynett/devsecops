@@ -12,8 +12,13 @@ metadata:
   name: renovate-infisical-auth
   namespace: renovate
 spec:
-  connectionRef:
+  infisicalConnectionRef: # Fixed: Name updated in v1beta1
     name: infisical-connection
-  universalAuth:
-    secretsRef:
-      secretName: infisical-machine-identity-credentials
+  method: universal         # Fixed: Added explicit method block
+  universal:
+    clientIdRef:
+      name: infisical-machine-identity-credentials
+      key: clientId
+    clientSecretRef:
+      name: infisical-machine-identity-credentials
+      key: clientSecret
