@@ -11,4 +11,4 @@
 ![Infisical](https://img.shields.io/badge/Infisical-%23000000.svg?style=flat-square&logo=infinity&logoColor=FFD700)
 ![Mend Renovate](https://img.shields.io/badge/Mend_Renovate-%23002F6C.svg?style=flat-square&logo=renovate&logoColor=white)
 
-A GitOps FluxCD driven K8s Cluster for Data Science at USIU - Africa.
+An immutable, GitOps-driven Kubernetes cluster optimized for distributed data science workflows. Powered by Talos Linux, FluxCD, Longhorn storage, and Infisical secure secret orchestration.
