@@ -13,7 +13,6 @@ spec:
   template:
     metadata:
       annotations:
-        # Reloader names match the exact managed names created by Infisical above
         secret.reloader.stakater.com/reload: "renovate-secret"
         configmap.reloader.stakater.com/reload: "renovate-config-files"
       labels:
@@ -31,8 +30,7 @@ spec:
             - containerPort: 8080
               name: http-webhook
           envFrom:
-            # Option A drops the "renovate-" prefix from environment keys,
-            # rendering them cleanly as GITHUB_COM_TOKEN, MEND_RNV_WEBHOOK_SECRET, etc.
+            # Dynamically loads raw environment keys (e.g., GITHUB_COM_TOKEN)
             - secretRef:
                 name: renovate-secret
           env:
@@ -59,7 +57,7 @@ spec:
               mountPath: /usr/src/app/data
             - name: renovate-config-volume
               mountPath: /usr/src/app/config.js
-              subPath: config.js # Matches the transformed key name "config.js"
+              subPath: config.js # Matches the internal target path mapping below
             - name: renovate-github-app-pem-volume
               mountPath: /usr/src/app/renovate.private-key.pem
               subPath: renovate.private-key.pem
@@ -70,9 +68,12 @@ spec:
         - name: renovate-config-volume
           configMap:
             name: renovate-config-files
+            items:
+              - key: renovate-config.js   # Captures the prefixed key from your dashboard
+                path: config.js            # Translates it into the subPath filename
         - name: renovate-github-app-pem-volume
           secret:
-            secretName: renovate-secret # Pointed to the single unified secret engine
+            secretName: renovate-secret
             items:
-              - key: github-app.pem     # Matches transformed key name "github-app.pem"
-                path: renovate.private-key.pem
+              - key: renovate-github-app-pem  # Captures the prefixed key from your dashboard
+                path: renovate.private-key.pem # Translates it into the subPath filename
