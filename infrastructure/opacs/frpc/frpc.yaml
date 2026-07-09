@@ -13,3 +13,9 @@ proxies:
     localIP: "kubernetes.default.svc"
     localPort: 443
     remotePort: 6443
+
+  - name: "renovate-mistiusiu"
+    type: "http"
+    localIP: "renovate-ce.default.svc.cluster.local"
+    localPort: 8080
+    subdomain: "renovate"
