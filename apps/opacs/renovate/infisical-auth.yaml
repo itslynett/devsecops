@@ -14,6 +14,7 @@ metadata:
 spec:
   infisicalConnectionRef: # Fixed: Name updated in v1beta1
     name: infisical-connection
+    namespace: renovate
   method: universal         # Fixed: Added explicit method block
   universal:
     clientIdRef:
