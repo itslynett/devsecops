@@ -10,4 +10,6 @@ spec:
   sourceRef:
     kind: GitRepository
     name: flux-system
+  dependsOn:
+    - name: infisical-operator
   targetNamespace: renovate

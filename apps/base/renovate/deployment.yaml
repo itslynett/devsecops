@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: renovate-ce
+  namespace: renovate
 spec:
   replicas: 1
   strategy:
@@ -11,6 +12,10 @@ spec:
       app: renovate-ce
   template:
     metadata:
+      annotations:
+        # Reloader names match the exact managed names created by Infisical above
+        secret.reloader.stakater.com/reload: "renovate-secret"
+        configmap.reloader.stakater.com/reload: "renovate-config-files"
       labels:
         app: renovate-ce
     spec:
@@ -26,19 +31,11 @@ spec:
             - containerPort: 8080
               name: http-webhook
           envFrom:
-            - configMapRef:
-                name: renovate-config
+            # Option A drops the "renovate-" prefix from environment keys,
+            # rendering them cleanly as GITHUB_COM_TOKEN, MEND_RNV_WEBHOOK_SECRET, etc.
+            - secretRef:
+                name: renovate-secret
           env:
-            - name: MEND_RNV_WEBHOOK_SECRET
-              valueFrom:
-                secretKeyRef:
-                  name: renovate-secret
-                  key: MEND_RNV_WEBHOOK_SECRET
-            - name: GITHUB_COM_TOKEN
-              valueFrom:
-                secretKeyRef:
-                  name: renovate-secret
-                  key: GITHUB_COM_TOKEN
             - name: HOME
               value: /tmp/renovate
             - name: XDG_CONFIG_HOME
@@ -62,7 +59,7 @@ spec:
               mountPath: /usr/src/app/data
             - name: renovate-config-volume
               mountPath: /usr/src/app/config.js
-              subPath: config.js
+              subPath: config.js # Matches the transformed key name "config.js"
             - name: renovate-github-app-pem-volume
               mountPath: /usr/src/app/renovate.private-key.pem
               subPath: renovate.private-key.pem
@@ -75,7 +72,7 @@ spec:
             name: renovate-config-files
         - name: renovate-github-app-pem-volume
           secret:
-            secretName: renovate-github-app-pem
+            secretName: renovate-secret # Pointed to the single unified secret engine
             items:
-              - key: github-app.pem
+              - key: github-app.pem     # Matches transformed key name "github-app.pem"
                 path: renovate.private-key.pem

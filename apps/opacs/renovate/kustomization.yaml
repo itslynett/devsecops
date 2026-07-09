@@ -3,22 +3,5 @@ kind: Kustomization
 
 resources:
   - ../../base/renovate
-
-configMapGenerator:
-  - name: renovate-config
-    envs:
-      - ../../base/renovate/renovate-common.env
-      - renovate-prod.env
-  - name: renovate-config-files
-    files:
-      - config.js=../../base/renovate/renovate-config.js
-
-secretGenerator:
-  - name: renovate-secret
-    envs:
-      - .env.secret
-    type: Opaque
-  - name: renovate-github-app-pem
-    files:
-      - github-app.pem=../../base/renovate/mistiusiu-mend-renovate.2026-07-09.private-key.pem
-    type: Opaque
+  - infisical-auth.yaml
+  - infisical-secrets.yaml
