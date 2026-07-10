@@ -1,4 +1,4 @@
-# USIU - Africa K8s Cluster
+# Data Science, Analytics & Engineering K8s Cluster
 
 ![Kubernetes](https://img.shields.io/badge/Kubernetes-%23326ce5.svg?style=flat-square&logo=kubernetes&logoColor=white)
 ![Talos Linux](https://img.shields.io/badge/Talos_Linux-%231E293B.svg?style=flat-square&logo=talos&logoColor=white)
