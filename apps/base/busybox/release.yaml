@@ -1,0 +1,23 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: busybox
+  namespace: busybox
+spec:
+  releaseName: busybox
+  chart:
+    spec:
+      chart: ./apps/base/busybox/chart
+      sourceRef:
+        kind: GitRepository
+        name: flux-system
+        namespace: flux-system
+  install:
+    createNamespace: false
+    remediation:
+      retries: 3
+  upgrade:
+    remediation:
+      retries: 3
+  interval: 10m
+  targetNamespace: busybox

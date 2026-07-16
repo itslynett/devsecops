@@ -1,0 +1,6 @@
+apiVersion: v2
+name: busybox
+description: A local Helm chart for deploying a busybox container
+type: application
+version: 0.1.0
+appVersion: "1.36.1"
