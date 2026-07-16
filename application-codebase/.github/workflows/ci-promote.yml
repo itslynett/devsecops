@@ -1,0 +1,68 @@
+name: Continuous Integration & GitOps Promotion
+
+on:
+  push:
+    branches:
+      - main
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  build-and-promote:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      packages: write
+
+    steps:
+      - name: Checkout Application Code
+        uses: actions/checkout@v4
+
+      - name: Log in to Docker Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata (tags, labels)
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=sha,format=long
+
+      - name: Build and Push Docker Image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+
+      - name: Checkout GitOps Repository
+        uses: actions/checkout@v4
+        with:
+          repository: your-org/gitops-delivery-repo # Replace with your user/org and GitOps repo name
+          token: ${{ secrets.GITOPS_PROMOTION_TOKEN }} # PAT with write access to GitOps repo
+          path: gitops-repo
+
+      - name: Install Kustomize
+        uses: imranismail/setup-kustomize@v2
+
+      - name: Update Image Tag in GitOps Overlay
+        run: |
+          cd gitops-repo/apps/overlays/production
+          kustomize edit set image generic-app=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:sha-${{ github.sha }}
+
+      - name: Commit and Push to GitOps Repo
+        run: |
+          cd gitops-repo
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add apps/overlays/production/kustomization.yaml
+          git commit -m "chore(cd): promote generic-app to sha-${{ github.sha }} [skip ci]"
+          git push origin main
